@@ -1,0 +1,126 @@
+service_name:
+  type: str
+  help: Nombre del servicio para terragrunt
+  validator: >-
+    {% if not service_name %}
+      No puede estar vacío
+    {% endif %}
+
+project:
+  type: str
+  help: Optional | Nombre del proyecto
+
+codestar:
+  type: bool
+  help: Reutilizar una conexion de codestar?
+  default: false
+
+codestar_arn:
+  type: str
+  help: Optional | Escriba el arn del codestar connection
+  when: "{{ codestar == true }}"
+  validator: >-
+    {% if not codestar_arn %}
+      No puede estar vacío
+    {% endif %}
+
+bucket_cicd:
+  type: bool
+  help: Reutilizar Buckets para CI/CD?
+  default: false
+
+cicd_bucket_cache:
+  type: str
+  help: Nombre del bucket para el cache de CI/CD
+  when: "{{ bucket_cicd == true }}"
+  validator: >-
+    {% if not cicd_bucket_cache %}
+      No puede estar vacío
+    {% endif %}
+
+cicd_bucket_cache_arn:
+  type: str
+  help: ARN del bucket para el cache de CI/CD
+  when: "{{ bucket_cicd == true }}"
+  validator: >-
+    {% if not cicd_bucket_cache_arn %}
+      No puede estar vacío
+    {% endif %}
+
+cicd_bucket_artifacts:
+  type: str
+  help: Nombre del bucket para el artifacs de CI/CD
+  when: "{{ bucket_cicd == true }}"
+  validator: >-
+    {% if not cicd_bucket_artifacts %}
+      No puede estar vacío
+    {% endif %}
+
+cicd_bucket_artifacts_arn:
+  type: str
+  help: ARN del bucket para el artifacs de CI/CD
+  when: "{{ bucket_cicd == true }}"
+  validator: >-
+    {% if not cicd_bucket_artifacts_arn %}
+      No puede estar vacío
+    {% endif %}
+
+log_group:
+  type: bool
+  help: Reutilizar Logs Group para CI/CD?
+  default: false
+
+cicd_log_group_name:
+  type: str
+  help: Nombre del logs Group para CI/CD
+  when: "{{ log_group == true }}"
+  validator: >-
+    {% if not cicd_log_group_name %}
+      No puede estar vacío
+    {% endif %}
+
+use_role:
+  type: bool
+  help: Usa un assume_role para el provider de AWS?
+  default: false
+
+role_arn:
+  type: str
+  help: ARN del role a utilizar
+  when: "{{ use_role == true }}"
+  validator: >-
+    {% if not role_arn %}
+      No puede estar vacío
+    {% endif %}
+
+backend:
+  type: bool
+  help: Usar remote_state s3 en terragrunt?
+  default: false
+
+backend_bucket:
+  type: str
+  help: Nombre del backend para el backend de terragrunt
+  when: "{{ backend == true }}"
+  validator: >-
+    {% if not backend_bucket %}
+      No puede estar vacío
+    {% endif %}
+
+backend_region:
+  type: str
+  help: Region de donde esta el Bucket
+  when: "{{ backend == true }}"
+  validator: >-
+    {% if not backend_region %}
+      No puede estar vacío
+    {% endif %}
+
+backend_dynamodb_table:
+  type: str
+  help: Nombre de la tabla de DynamoDB para el backend de terragrunt
+  when: "{{ backend == true }}"
+  validator: >-
+    {% if not backend_dynamodb_table %}
+      No puede estar vacío
+    {% endif %}

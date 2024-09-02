@@ -1,0 +1,13 @@
+DevContainer:
+  type: bool
+  help: Crear DevContainer configs?
+  default: false
+
+project_name:
+  type: str
+  help: Cual es el nombre del proyecto para docker-compose?
+  validator: >-
+    {% if not (project_name | regex_search('^[a-z0-9][a-z0-9_-]*$')) %}
+      Los nombres de los proyectos sólo pueden contener letras minúsculas, cifras decimales, guiones y guiones bajos, y deben empezar por una letra minúscula o una cifra decimal.
+    {% endif %}
+  when: "{{ DevContainer == true }}"

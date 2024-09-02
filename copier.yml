@@ -1,3 +1,13 @@
 ---
 !include copier/settings.yml
 
+---
+!include copier/questions/devcontainer.yml
+
+---
+!include copier/questions/aws_secret.yml
+
+---
+!include copier/questions/terragrunt.yml
+
+
