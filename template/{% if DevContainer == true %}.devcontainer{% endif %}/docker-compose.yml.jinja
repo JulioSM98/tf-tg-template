@@ -1,0 +1,9 @@
+services:
+  {{project_name}}:
+    build: .
+    volumes:
+      - ../:/data
+    entrypoint: /bin/sh -c "while sleep 1000; do :; done"
+    env_file:
+      - .env
+    

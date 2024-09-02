@@ -1,0 +1,78 @@
+locals {
+  region = get_env("AWS_DEFAULT_REGION", "us-west-2")
+
+  version_terraform = ">= 1.8.5"
+
+  version_terragrunt = ">= 0.59.5"
+
+  version_provider_aws = ">= 5.56.1"
+
+  service = "{{service_name}}"
+  {% if project != '' %}
+  project = "{{project}}"
+  {% endif %}
+  {% if codestar %}
+  codestar_cnn_arn = "{{codestar_arn}}"
+  {% endif %}
+  {% if bucket_cicd %}
+  cicd_bucket_cache_arn = "{{cicd_bucket_cache_arn}}"
+  cicd_bucket_artifacts_arn = "{{cicd_bucket_artifacts_arn}}"
+
+  cicd_bucket_artifacts = "{{cicd_bucket_artifacts}}"
+  cicd_bucket_cache     = "{{cicd_bucket_cache}}"
+  {% endif %}
+  {% if log_group %}
+  cicd_log_group_name = "{{cicd_log_group_name}}"
+  {% endif %}
+  dir = split("/", path_relative_to_include())
+
+  tags_defaults = {
+    "Service" = title(local.service)
+    "Owner"    = "Terraform",
+    "Project"  = title(local.project)
+  }
+}
+
+generate "providers" {
+  path      = "${get_parent_terragrunt_dir()}/src/provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
+terraform {
+    required_version = "${local.version_terraform}"
+    required_providers {
+        aws = {
+            source = "hashicorp/aws"
+            version = "${local.version_provider_aws}"
+        }
+    }
+}
+
+
+
+provider "aws" {
+  region = "${local.region}"
+  {% if use_role %}
+  assume_role {
+    role_arn = "{{role_arn}}"
+  }
+  {% endif %}
+}
+EOF
+}
+
+{% if backend %}
+remote_state {
+  backend = "s3"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+  config = {
+    bucket         = "{{backend_bucket}}"
+    key            = "${local.project}/${local.platform}/${path_relative_to_include()}/terraform.tfstate"
+    region         = "{{backend_region}}"
+    encrypt        = true
+    dynamodb_table = "{{backend_dynamodb_table}}"
+  }
+}
+{% endif %}
