@@ -1,0 +1,31 @@
+ecr:
+  type: bool
+  help: Agregar ECR?
+  default: false
+
+ecr_default:
+  type: str
+  help: ECR default, o personalizado?
+  choice:
+    - default
+    - personalizado
+  default: default
+  when: "{{ ecr }}"
+
+
+image_tag_mutability:
+  type: str
+  help: La configuración de mutabilidad de etiquetas para el repositorio.
+  choice:
+    - MUTABLE
+    - INMUTABLE
+  default: INMUTABLE
+  when: "{{ ecr_default == personalizado }}"
+
+image_scan_on_push:
+  type: bool
+  help: Indica si las imágenes se escanean después de ser enviadas al repositorio
+  default: true
+  when: "{{ ecr_default == personalizado }}"
+  
+   
