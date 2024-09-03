@@ -1,0 +1,66 @@
+terraform {
+  source = "${get_parent_terragrunt_dir()}/src/${local.service}"
+}
+
+include "root" {
+  path   = find_in_parent_folders()
+  expose = true
+}
+
+locals {
+  local_tags = {
+    "Environment" = title(local.env_name)
+  }
+  env_name = split("/", path_relative_to_include())[1]
+  service  = split("/", path_relative_to_include())[length(split("/", path_relative_to_include())) - 1]
+  tags     = merge(include.root.locals.tags_defaults, local.local_tags)
+}
+
+inputs = {
+  registrys = {
+    registry_1 = {
+      name                 = "${include.root.locals.service}-${include.root.locals.project}-${local.env_name}"
+      image_tag_mutability = "{{image_tag_mutability}}"
+      image_scan_on_push   = {{image_scan_on_push}}
+
+      lifecycle_policy = {
+        rules = [
+          {
+            rulePriority = 1
+            description  = "Expire images older than 120 days"
+
+            selection = {
+              tagStatus   = "untagged"
+              countType   = "sinceImagePushed"
+              countNumber = 120
+              countUnit   = "days"
+            }
+
+            action = {
+              type = "expire"
+            }
+
+          },
+          {
+            rulePriority = 2
+            description  = "10 number of images to be maintained"
+
+            selection = {
+              tagStatus   = "any"
+              countType   = "imageCountMoreThan"
+              countNumber = 10
+              countUnit   = null
+            }
+
+            action = {
+              type = "expire"
+            }
+
+          }
+        ]
+      }
+
+      tags = local.tags
+    }
+  }
+}
