@@ -29,7 +29,9 @@ locals {
   tags_defaults = {
     "Service" = title(local.service)
     "Owner"    = "Terraform",
+    {% if project != '' %}
     "Project"  = title(local.project)
+    {% endif %}
   }
 }
 
