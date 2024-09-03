@@ -10,4 +10,10 @@
 ---
 !include copier/questions/terragrunt.yml
 
+---
+!include copier/questions/env.yml
+
+---
+!include copier/questions/example.yml
+
 
