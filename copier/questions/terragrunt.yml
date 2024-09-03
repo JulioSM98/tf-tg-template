@@ -111,10 +111,12 @@ backend_region:
   type: str
   help: Region de donde esta el Bucket
   when: "{{ backend == true }}"
-  validator: >-
-    {% if not backend_region %}
-      No puede estar vacío
-    {% endif %}
+  choices:
+    - us-east-1
+    - us-east-2
+    - us-west-1
+    - us-west-2
+  default: us-east-1
 
 backend_dynamodb_table:
   type: str
